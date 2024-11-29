@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Talkify - A Chat Application</title>
     <link rel="stylesheet" href="style.css" />
-    <script defer src="http://localhost:8000/socket.io/socket.io.js"></script>
+    <!-- Using relative path for production -->
+    <script defer src="/socket.io/socket.io.js"></script>
     <script defer src="client.js"></script>
   </head>
   <body>
     <!-- Navigation Bar -->
     <nav aria-label="Main Navigation">
-      
       <img class="logo" src="App-Logo.png" alt="Talkify Logo" />
     </nav>
     <div id="welcome-message">
@@ -28,7 +28,7 @@
       </div>
 
       <!-- Chat Container -->
-      <div class="container">
+      <div class="container" id="messages">
         <!-- Messages will be dynamically added here -->
       </div>
 
