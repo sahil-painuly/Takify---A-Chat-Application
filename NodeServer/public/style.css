@@ -428,7 +428,7 @@
     justify-content: space-between;
     width: 85%;
     max-width: 1200px;
-    height: 80vh;
+    height: 58vh;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
@@ -456,6 +456,6 @@
     box-sizing: border-box;
     background-color: #f9f9f9;
     border-radius: 36px;
-    height: 70%;
+    height: 100%;
   }
   
