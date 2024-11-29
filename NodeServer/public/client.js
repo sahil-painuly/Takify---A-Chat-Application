@@ -1,11 +1,10 @@
-const socket = io(location.origin); // Dynamically uses the correct protocol (http/https)
+const socket = io("http://localhost:8000"); // Adjust protocol if server uses HTTPS
 
 const form = document.getElementById("send-container");
 const messageInput = document.getElementById("messageInp");
 const messageContainer = document.querySelector(".container");
 
-const sound = new Audio("/ting.mp3"); // Corrected path for sound file
-const imgPath = "/Dp.jpg"; // Corrected path for profile image
+const sound = new Audio("../ting.mp3"); // Corrected path for sound file
 
 const append = (message, position) => {
   const messageElement = document.createElement("div");
@@ -28,9 +27,10 @@ form.addEventListener("submit", (e) => {
 });
 
 // Prompt user for name and handle errors
-let name = prompt("Enter Your Name:");
-while (!name) {
-  name = prompt("Name is required. Please enter your name:");
+const name = prompt("Enter Your Name:");
+if (!name) {
+  alert("You must enter a name to join the chat.");
+  throw new Error("Name is required to join the chat.");
 }
 socket.emit("new-user-joined", name);
 
@@ -55,7 +55,7 @@ socket.on("active-users", (users) => {
 
     // Create profile image element
     const img = document.createElement("img");
-    img.src = imgPath; // Path to the default user profile image
+    img.src = "../Dp.jpg"; // Path to the default user profile image
     img.alt = "User DP";
 
     // Create user name element
@@ -78,8 +78,18 @@ socket.on("user-left", (name) => {
   sound.play(); // Optionally, play sound when someone leaves
 });
 
-// Handle connection errors
-socket.on("connect_error", (error) => {
-  console.error("Connection error:", error);
-  alert("Unable to connect to the chat server.");
+// JavaScript to toggle the visibility of the online users section
+document.addEventListener("DOMContentLoaded", () => {
+  const toggleBtn = document.getElementById("toggle-users-btn");
+  const onlineSection = document.getElementById("online-section");
+
+  toggleBtn.addEventListener("click", () => {
+    if (onlineSection.style.display === "none" || onlineSection.style.display === "") {
+      onlineSection.style.display = "block";
+      toggleBtn.textContent = "Hide Online Users";
+    } else {
+      onlineSection.style.display = "none";
+      toggleBtn.textContent = "Show Online Users";
+    }
+  });
 });
