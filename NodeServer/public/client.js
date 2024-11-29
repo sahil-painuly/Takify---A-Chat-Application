@@ -1,10 +1,11 @@
-const socket = io("http://localhost:8000"); // Adjust protocol if server uses HTTPS
+const socket = io(location.origin); // Dynamically uses the correct protocol (http/https)
 
 const form = document.getElementById("send-container");
 const messageInput = document.getElementById("messageInp");
 const messageContainer = document.querySelector(".container");
 
-const sound = new Audio("../ting.mp3"); // Corrected path for sound file
+const sound = new Audio("/ting.mp3"); // Corrected path for sound file
+const imgPath = "/Dp.jpg"; // Corrected path for profile image
 
 const append = (message, position) => {
   const messageElement = document.createElement("div");
@@ -27,10 +28,9 @@ form.addEventListener("submit", (e) => {
 });
 
 // Prompt user for name and handle errors
-const name = prompt("Enter Your Name:");
-if (!name) {
-  alert("You must enter a name to join the chat.");
-  throw new Error("Name is required to join the chat.");
+let name = prompt("Enter Your Name:");
+while (!name) {
+  name = prompt("Name is required. Please enter your name:");
 }
 socket.emit("new-user-joined", name);
 
@@ -55,7 +55,7 @@ socket.on("active-users", (users) => {
 
     // Create profile image element
     const img = document.createElement("img");
-    img.src = "../Dp.jpg"; // Path to the default user profile image
+    img.src = imgPath; // Path to the default user profile image
     img.alt = "User DP";
 
     // Create user name element
@@ -76,4 +76,10 @@ socket.on("active-users", (users) => {
 socket.on("user-left", (name) => {
   append(`${name} left the chat`, "left");
   sound.play(); // Optionally, play sound when someone leaves
+});
+
+// Handle connection errors
+socket.on("connect_error", (error) => {
+  console.error("Connection error:", error);
+  alert("Unable to connect to the chat server.");
 });
