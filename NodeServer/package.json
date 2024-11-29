@@ -1,0 +1,17 @@
+{
+  "name": "nodeserver",
+  "version": "1.0.0",
+  "description": "This is my Takify Web Chat application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",      
+    "dev": "nodemon index.js" 
+  },
+  "author": "Sahil Painuly",
+  "license": "ISC",
+  "dependencies": {
+    "engine.io": "^6.6.2",
+    "nodemon": "^3.1.7",
+    "socket.io": "^4.8.1"
+  }
+}
