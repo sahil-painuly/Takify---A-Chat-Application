@@ -1,82 +1,60 @@
-const socket = io("http://localhost:8000"); // Adjust protocol if server uses HTTPS
+// Connect to Socket.IO
+const socket = io(); // Will automatically connect to the server at the same host
 
-const form = document.getElementById("send-container");
-const messageInput = document.getElementById("messageInp");
-const messageContainer = document.querySelector(".container");
+// Selecting DOM elements
+const messageInp = document.getElementById("messageInp");
+const sendBtn = document.querySelector(".btn");
+const messagesContainer = document.getElementById("messages");
+const onlineUsersList = document.getElementById("online-users");
 
-const sound = new Audio("../ting.mp3"); // Corrected path for sound file
+// When a new user joins
+const username = prompt("Enter your name:");
+socket.emit("new-user-joined", username);
 
-const append = (message, position) => {
-  const messageElement = document.createElement("div");
-  messageElement.innerText = message;
-  messageElement.classList.add("message", position);
-  messageContainer.append(messageElement);
-  messageContainer.scrollTop = messageContainer.scrollHeight; // Scroll to the latest message
-};
-
-// Sending messages
-form.addEventListener("submit", (e) => {
+// Sending message
+sendBtn.addEventListener("click", (e) => {
   e.preventDefault();
-  const message = messageInput.value.trim(); // Trim to prevent empty spaces
-  if (message) {
-    append(`You: ${message}`, "right");
-    socket.emit("send", message);
-    messageInput.value = "";
-    messageInput.focus(); // Keep focus on the input
+  const message = messageInp.value.trim();
+  if (message !== "") {
+    socket.emit("send", message); // Send the message to the server
+    messageInp.value = ""; // Clear input
+    addMessage("You", message); // Add to the chat UI
   }
 });
 
-// Prompt user for name and handle errors
-const name = prompt("Enter Your Name:");
-if (!name) {
-  alert("You must enter a name to join the chat.");
-  throw new Error("Name is required to join the chat.");
-}
-socket.emit("new-user-joined", name);
-
-socket.on("user-joined", (name) => {
-  append(`${name} joined the chat`, "left");
-  sound.play(); // Play sound on new user join
-});
-
-// Handle receiving messages
+// Receiving messages from others
 socket.on("receive", (data) => {
-  append(`${data.name}: ${data.message}`, "left");
-  sound.play(); // Play sound on receiving a message
+  addMessage(data.name, data.message);
 });
 
-// Show online users list with profile images
+// User joins
+socket.on("user-joined", (name) => {
+  addMessage("System", `${name} joined the chat.`);
+});
+
+// User leaves
+socket.on("user-left", (name) => {
+  addMessage("System", `${name} left the chat.`);
+});
+
+// Update online users list
 socket.on("active-users", (users) => {
-  const onlineList = document.getElementById("online-users");
-  onlineList.innerHTML = ""; // Clear the previous list
+  onlineUsersList.innerHTML = ""; // Clear the list first
   users.forEach((user) => {
-    const userElement = document.createElement("li");
-    userElement.classList.add("online-user");
-
-    // Create profile image element
-    const img = document.createElement("img");
-    img.src = "../Dp.jpg"; // Path to the default user profile image
-    img.alt = "User DP";
-
-    // Create user name element
-    const userInfo = document.createElement("div");
-    userInfo.classList.add("user-info");
-    userInfo.textContent = user;
-
-    // Append image and user name to the list item
-    userElement.appendChild(img);
-    userElement.appendChild(userInfo);
-
-    // Append the user element to the online users list
-    onlineList.appendChild(userElement);
+    const userItem = document.createElement("li");
+    userItem.textContent = user;
+    onlineUsersList.appendChild(userItem);
   });
 });
 
-// Display when a user leaves the chat
-socket.on("user-left", (name) => {
-  append(`${name} left the chat`, "left");
-  sound.play(); // Optionally, play sound when someone leaves
-});
+// Function to display messages
+function addMessage(sender, message) {
+  const messageElem = document.createElement("div");
+  messageElem.classList.add("message");
+  messageElem.innerHTML = `<strong>${sender}:</strong> ${message}`;
+  messagesContainer.appendChild(messageElem);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to the bottom
+}
 
 // JavaScript to toggle the visibility of the online users section
 document.addEventListener("DOMContentLoaded", () => {
