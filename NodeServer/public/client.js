@@ -4,7 +4,7 @@ const form = document.getElementById("send-container");
 const messageInput = document.getElementById("messageInp");
 const messageContainer = document.querySelector(".container");
 
-const sound = new Audio("../ting.mp3"); // Corrected path for sound file
+const sound = new Audio("ting.mp3"); // Corrected path for sound file
 
 // Function to append messages to the chat
 const append = (message, position) => {
