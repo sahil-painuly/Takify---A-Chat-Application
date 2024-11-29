@@ -288,6 +288,20 @@
 
 /* Hide the online section by default on mobile */
 @media (max-width: 768px) {
+    #welcome-message {
+        font-size:13px;
+    }
+    #chat-container {
+         height: 55vh;
+    }
+    .container{
+        height: 100%;
+    }
+    .logo{
+        display:block;
+        width:60px;
+        height:60px;
+    }
     #online-section {
       display: none; /* Hidden by default */
       width: 100%; /* Full width on mobile */
@@ -442,6 +456,6 @@
     box-sizing: border-box;
     background-color: #f9f9f9;
     border-radius: 36px;
-    height: 68%;
+    height: 70%;
   }
   
