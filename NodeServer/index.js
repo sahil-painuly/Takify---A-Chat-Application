@@ -1,33 +1,44 @@
-const { Socket } = require('socket.io');
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io'); // Import Server from socket.io for better clarity
 
-// Dynamically set the port
-const PORT = process.env.PORT || 8000; 
+// Set up Express and HTTP server
+const app = express();
+const PORT = process.env.PORT || 8000;
+const server = http.createServer(app);
 
-const io = require('socket.io')(PORT, {
+// Initialize Socket.IO server
+const io = new Server(server, {
   cors: {
-    origin: "*", // Change this to your production frontend URL for security
-  },
+    origin: "*", // Replace with your production frontend URL for better security
+    methods: ["GET", "POST"]
+  }
 });
 
-const users = {}; // Keep track of active users by their socket ID
+// Serve static files (e.g., index.html, CSS, JS)
+app.use(express.static(__dirname + '/public')); // Ensure your frontend files are in a 'public' directory
+
+// Store active users
+const users = {};
 
 // Function to emit the list of active users
 const updateUsers = () => {
   io.emit('active-users', Object.values(users));
 };
 
+// Socket.IO connection handling
 io.on('connection', (socket) => {
-  // When a new user joins
+  console.log(`User connected: ${socket.id}`);
+
+  // New user joins
   socket.on('new-user-joined', (name) => {
     users[socket.id] = name;
     console.log(`${name} joined the chat`);
-    socket.broadcast.emit('user-joined', name);
-    
-    // Update active users list for all clients
-    updateUsers();
+    socket.broadcast.emit('user-joined', name); // Notify others
+    updateUsers(); // Update active users list
   });
 
-  // When a user sends a message
+  // User sends a message
   socket.on('send', (message) => {
     socket.broadcast.emit('receive', {
       message: message,
@@ -35,18 +46,19 @@ io.on('connection', (socket) => {
     });
   });
 
-  // When a user disconnects
+  // User disconnects
   socket.on('disconnect', () => {
     const name = users[socket.id];
     if (name) {
       console.log(`${name} left the chat`);
-      delete users[socket.id]; // Remove the user from the users list
-      socket.broadcast.emit('user-left', name);
-      
-      // Update active users list for all clients
-      updateUsers();
+      delete users[socket.id]; // Remove from active users
+      socket.broadcast.emit('user-left', name); // Notify others
+      updateUsers(); // Update active users list
     }
   });
 });
 
-console.log(`Server running on port ${PORT}`);
+// Start the server
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
