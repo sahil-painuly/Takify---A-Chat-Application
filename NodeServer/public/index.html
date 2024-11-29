@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Talkify - A Chat Application</title>
+
     <link rel="stylesheet" href="style.css" />
-    <!-- Using relative path for production -->
-    <script defer src="/socket.io/socket.io.js"></script>
+    <script defer src="http://localhost:8000/socket.io/socket.io.js"></script>
     <script defer src="client.js"></script>
   </head>
   <body>
@@ -14,9 +14,7 @@
     <nav aria-label="Main Navigation">
       <img class="logo" src="App-Logo.png" alt="Talkify Logo" />
     </nav>
-    <div id="welcome-message">
-      Welcome to Talkify!!
-    </div>
+    <div id="welcome-message">Welcome to Talkify!!</div>
 
     <div id="chat-container">
       <!-- Left Sidebar for Online Users -->
@@ -28,7 +26,7 @@
       </div>
 
       <!-- Chat Container -->
-      <div class="container" id="messages">
+      <div class="container">
         <!-- Messages will be dynamically added here -->
       </div>
 
@@ -46,5 +44,10 @@
         </form>
       </div>
     </div>
+
+    <!-- Toggle Online Users Button (Visible on both Mobile and Desktop) -->
+    <button id="toggle-users-btn" class="btn">Show Online Users</button>
+
+    <!-- Removed duplicate online users section -->
   </body>
 </html>
