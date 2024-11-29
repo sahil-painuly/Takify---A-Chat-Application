@@ -1,4 +1,4 @@
-const socket = io(); 
+const socket = io(window.location.hostname);  // Automatically uses the current domain and port for the connection
 
 const form = document.getElementById("send-container");
 const messageInput = document.getElementById("messageInp");
